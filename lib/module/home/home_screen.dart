@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:ecomerce_app/core/style/app_color.dart';
+import 'package:ecomerce_app/module/home/cubit/cubit.dart';
 import 'package:ecomerce_app/module/home/widgets/almost_done.dart';
+import 'package:ecomerce_app/module/home/widgets/drawer.dart';
 import 'package:ecomerce_app/module/home/widgets/electrons.dart';
 import 'package:ecomerce_app/module/home/widgets/footer.dart';
 import 'package:ecomerce_app/module/home/widgets/home_banner.dart';
@@ -11,6 +13,7 @@ import 'package:ecomerce_app/module/home/widgets/search_bar.dart';
 import 'package:ecomerce_app/module/home/widgets/status.dart';
 import 'package:ecomerce_app/module/home/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     log('build home screen');
     return Scaffold(
+      drawer: CustomDrawer(),
+      key: BlocProvider.of<HomeCubit>(context).scafoldKey,
       // resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -107,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
 
-
+  
 
 // class CarouselExampleApp extends StatelessWidget {
 //   const CarouselExampleApp({super.key});

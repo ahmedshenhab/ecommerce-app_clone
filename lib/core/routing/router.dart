@@ -1,6 +1,5 @@
-import 'package:ecomerce_app/module/home/cubit/cubit.dart';
 import 'package:ecomerce_app/module/home/home_screen.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ecomerce_app/module/details_screen/details_screen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -10,13 +9,10 @@ class AppRouter {
       //login
 
       case HomeScreen.homeScreen:
-        return MaterialPageRoute(
-          builder:
-              (_) => BlocProvider<HomeCubit>(
-                create: (context) => HomeCubit(),
-                child:  HomeScreen(),
-              ),
-        );
+        return MaterialPageRoute(builder: (_) => HomeScreen());
+
+      case DetailsScreen.detailScreen:
+        return MaterialPageRoute(builder: (_) => DetailsScreen());
 
       // register
 
