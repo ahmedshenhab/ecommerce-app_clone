@@ -1,4 +1,5 @@
 import 'package:ecomerce_app/module/home/cubit/states.dart';
+import 'package:ecomerce_app/module/home/models/product_by_category_model.dart';
 import 'package:ecomerce_app/module/home/repo/repo_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ class HomeCubit extends Cubit<HomeStates> {
   final RepoHome repoHome;
   late List<String> newsTitle;
   late List<String> storyImage;
+  List<CategoryData>? productByCategory;
 
   void getNews() async {
     emit(NewsLoadingStates());
@@ -39,9 +41,7 @@ class HomeCubit extends Cubit<HomeStates> {
     );
   }
 
-
-
-Future<void> getProductByCategory() async {
+  void getProductByCategory() async {
     emit(ProductByCategoryLoadingStates());
 
     final result = await repoHome.getProductByCategory();
@@ -50,8 +50,13 @@ Future<void> getProductByCategory() async {
         emit(ProductByCategoryErrorStates(message: l));
       },
       (r) {
-         emit(ProductByCategorySuccessStates(productByCategory: r));
+        productByCategory = r;
+        emit(ProductByCategorySuccessStates(productByCategory: r));
       },
     );
   }
+
+
+
+
 }

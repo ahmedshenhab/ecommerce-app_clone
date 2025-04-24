@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecomerce_app/core/style/app_color.dart';
+import 'package:ecomerce_app/module/details_screen.dart';
 import 'package:ecomerce_app/module/home/models/product_by_category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ShowAllProductScreen extends StatelessWidget {
   const ShowAllProductScreen({
@@ -18,6 +20,19 @@ class ShowAllProductScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          SizedBox(
+            width: 200.w,
+            height: 300.h,
+
+            child: SvgPicture.asset(
+              'assets/images/logo.svg',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
+
         title: Text(name),
 
         backgroundColor: Colors.white,
@@ -104,31 +119,47 @@ class ShowAllProductScreen extends StatelessWidget {
                           Stack(
                             alignment: Alignment.topRight,
                             children: [
-                              Container(
-                                height: 160.h,
-                                width: double.infinity,
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.r),
-                                  color: Colors.transparent,
-                                ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => DetailsScreen(
+                                            product: product?[index],
+                                          ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  height: 160.h,
+                                  width: double.infinity,
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    color: Colors.transparent,
+                                  ),
 
-                                child: CachedNetworkImage(
-                                  fit: BoxFit.cover,
-                                  imageUrl: product?[index].imageCover ?? '',
-                                  placeholder:
-                                      (context, url) => const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                  errorWidget:
-                                      (context, url, error) =>
-                                          const Icon(Icons.error),
+                                  child: CachedNetworkImage(
+                                    fit: BoxFit.cover,
+                                    imageUrl: product?[index].imageCover ?? '',
+                                    placeholder:
+                                        (context, url) => const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                    errorWidget:
+                                        (context, url, error) =>
+                                            const Icon(Icons.error),
+                                  ),
                                 ),
                               ),
-                              Icon(
-                                Icons.favorite_border,
-                                color: Colors.red,
-                                size: 30.w,
+                              InkWell(
+                                onTap: () {},
+                                child: Icon(
+                                  Icons.favorite_border,
+                                  color: Colors.red,
+                                  size: 30.w,
+                                ),
                               ),
                             ],
                           ),

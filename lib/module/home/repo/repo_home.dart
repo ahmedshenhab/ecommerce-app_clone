@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:ecomerce_app/core/network/remote/api_error_handler.dart';
 import 'package:ecomerce_app/module/home/models/news_model.dart';
 import 'package:ecomerce_app/module/home/models/product_by_category_model.dart';
+import 'package:ecomerce_app/module/home/models/product_image_model.dart';
 import 'package:ecomerce_app/module/home/models/story_model.dart';
 
 class RepoHome {
@@ -73,6 +74,25 @@ class RepoHome {
       return Right(prouctByCategory);
     } catch (e) {
       log('prouctByCategory $e');
+      return Left(ApiErrorHandler.handle(e).message!);
+    }
+  }
+
+  Future<Either<String, List<String?>>> getProductImage(int id) async {
+    try {
+      final result = await dio.get(
+        'https://clotheshop1.runasp.net/api/Product/$id',
+      );
+
+      final images =
+          ProductImageModel.fromJson(result.data).data?.images
+              ?.where((e) => e.imageUrl != null)
+              .map((e) => e.imageUrl)
+              .toList() ??
+          [];
+      return Right(images);    } catch (e) {
+      log( 'prouctByCategory $e');
+
       return Left(ApiErrorHandler.handle(e).message!);
     }
   }

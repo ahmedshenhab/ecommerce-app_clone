@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecomerce_app/core/style/app_color.dart';
 import 'package:ecomerce_app/module/details_screen.dart';
 import 'package:ecomerce_app/module/show_all_product_screen/show_all_product_screen.dart';

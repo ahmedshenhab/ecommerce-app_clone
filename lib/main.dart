@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       minTextAdapt: true,
+
       splitScreenMode: true,
       designSize: const Size(412, 915),
       builder:
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
 
               // onGenerateRoute: AppRouter.onGenerateRoute,
               // initialRoute:  HomeScreen.homeScreen,
-              home: const DetailsScreen(),
+              home: const HomeScreen(),
             ),
           ),
     );
