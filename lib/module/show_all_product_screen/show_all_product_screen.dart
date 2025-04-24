@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecomerce_app/core/style/app_color.dart';
-import 'package:ecomerce_app/module/details_screen.dart';
-import 'package:ecomerce_app/module/home/models/product_by_category_model.dart';
+import 'package:ecomerce_app/module/details_screen/details_screen.dart';
+import 'package:ecomerce_app/module/home/data/models/product_by_category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -48,40 +48,6 @@ class ShowAllProductScreen extends StatelessWidget {
             // (),
             SizedBox(height: 10.h),
 
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10.w),
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              height: 55.h,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.r),
-                color: AppColor.gray.withValues(alpha: 0.13),
-              ),
-              child: Row(
-                spacing: 10,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 7.h,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.r),
-                      border: Border.all(color: AppColor.gray, width: 0.5.w),
-                      color: Colors.white,
-                    ),
-                    child: Text(
-                      'اجهزه صوتيه',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontSize: 12.sp,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             SizedBox(height: 20.h),
 
             Expanded(
@@ -116,52 +82,39 @@ class ShowAllProductScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => DetailsScreen(
-                                            product: product?[index],
-                                          ),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  height: 160.h,
-                                  width: double.infinity,
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.r),
-                                    color: Colors.transparent,
-                                  ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => DetailsScreen(
+                                        product: product?[index],
+                                      ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: 160.h,
+                              width: double.infinity,
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.r),
+                                color: Colors.transparent,
+                              ),
 
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    imageUrl: product?[index].imageCover ?? '',
-                                    placeholder:
-                                        (context, url) => const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                    errorWidget:
-                                        (context, url, error) =>
-                                            const Icon(Icons.error),
-                                  ),
-                                ),
+                              child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                imageUrl: product?[index].imageCover ?? '',
+                                placeholder:
+                                    (context, url) => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                errorWidget:
+                                    (context, url, error) =>
+                                        const Icon(Icons.error),
                               ),
-                              InkWell(
-                                onTap: () {},
-                                child: Icon(
-                                  Icons.favorite_border,
-                                  color: Colors.red,
-                                  size: 30.w,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
 
                           SizedBox(height: 15.h),

@@ -1,6 +1,6 @@
 import 'package:ecomerce_app/core/style/app_color.dart';
+import 'package:ecomerce_app/module/favorite_screen/favorite_screen.dart';
 import 'package:ecomerce_app/module/home/cubit/cubit.dart';
-import 'package:ecomerce_app/module/home/widgets/product_by_category_section/category_section.dart';
 import 'package:ecomerce_app/module/show_all_product_screen/show_all_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,10 +29,40 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
 
+            Divider(
+              color: Colors.black.withValues(alpha: 0.5),
+              thickness: 0.3.h,
+
+              endIndent: 15.w,
+              indent: 15.w,
+              height: 30.h,
+            ),
+
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
 
               children: [
+                SizedBox(height: 20),
+
+                Padding(
+                  padding: EdgeInsets.only(right: 20.w),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => FavoriteScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'المفضلة',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
                 Divider(
                   color: Colors.black.withValues(alpha: 0.5),
                   thickness: 0.3.h,
@@ -41,7 +71,6 @@ class CustomDrawer extends StatelessWidget {
                   indent: 15.w,
                   height: 30.h,
                 ),
-
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: ListView.builder(
@@ -60,8 +89,16 @@ class CustomDrawer extends StatelessWidget {
                                     MaterialPageRoute(
                                       builder:
                                           (context) => ShowAllProductScreen(
-                                          name:  cubit.productByCategory?[index].name ?? 'default',
-                                          product: cubit.productByCategory?[index].products ?? [],
+                                            name:
+                                                cubit
+                                                    .productByCategory?[index]
+                                                    .name ??
+                                                'default',
+                                            product:
+                                                cubit
+                                                    .productByCategory?[index]
+                                                    .products ??
+                                                [],
                                           ),
                                     ),
                                   );

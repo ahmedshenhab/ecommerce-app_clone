@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:ecomerce_app/core/network/remote/api_error_handler.dart';
-import 'package:ecomerce_app/module/home/models/news_model.dart';
-import 'package:ecomerce_app/module/home/models/product_by_category_model.dart';
-import 'package:ecomerce_app/module/home/models/product_image_model.dart';
-import 'package:ecomerce_app/module/home/models/story_model.dart';
+import 'package:ecomerce_app/module/home/data/models/news_model.dart';
+import 'package:ecomerce_app/module/home/data/models/product_by_category_model.dart';
+import 'package:ecomerce_app/module/home/data/models/search_model.dart';
+import 'package:ecomerce_app/module/home/data/models/story_model.dart';
 
 class RepoHome {
   final Dio dio;
@@ -78,22 +78,20 @@ class RepoHome {
     }
   }
 
-  Future<Either<String, List<String?>>> getProductImage(int id) async {
-    try {
-      final result = await dio.get(
-        'https://clotheshop1.runasp.net/api/Product/$id',
-      );
+  Future<Either<String, List<Items>?>> getSearch(String name)async {
+try {
+  final result =  await dio.get('https://clotheshop1.runasp.net/api/Product?SearchName=$name');
 
-      final images =
-          ProductImageModel.fromJson(result.data).data?.images
-              ?.where((e) => e.imageUrl != null)
-              .map((e) => e.imageUrl)
-              .toList() ??
-          [];
-      return Right(images);    } catch (e) {
-      log( 'prouctByCategory $e');
 
-      return Left(ApiErrorHandler.handle(e).message!);
-    }
-  }
+final search=SearchModel.fromJson(result.data).data?.items;
+return Right(search);
+
+
+
+
+} catch (e) {
+
+  log('search error $e');
+  return Left(ApiErrorHandler.handle(e).message!);
+}  }
 }

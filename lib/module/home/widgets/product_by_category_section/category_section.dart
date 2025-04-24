@@ -1,7 +1,7 @@
 import 'package:ecomerce_app/core/style/app_color.dart';
-import 'package:ecomerce_app/module/details_screen.dart';
+import 'package:ecomerce_app/module/details_screen/details_screen.dart';
 import 'package:ecomerce_app/module/show_all_product_screen/show_all_product_screen.dart';
-import 'package:ecomerce_app/module/home/models/product_by_category_model.dart';
+import 'package:ecomerce_app/module/home/data/models/product_by_category_model.dart';
 import 'package:ecomerce_app/module/home/widgets/product_by_category_section/item_of_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -82,6 +82,9 @@ class CategorySection extends StatelessWidget {
                       MaterialPageRoute(
                         builder:
                             (context) => DetailsScreen(
+                              
+
+
                               product: categoryData.products![index],
                             ),
                       ),

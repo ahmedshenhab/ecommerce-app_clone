@@ -1,4 +1,5 @@
-import 'package:ecomerce_app/module/home/models/product_by_category_model.dart';
+import 'package:ecomerce_app/module/home/data/models/product_by_category_model.dart';
+import 'package:ecomerce_app/module/home/data/models/search_model.dart';
 
 class HomeStates {}
 
@@ -45,3 +46,24 @@ class ProductByCategoryErrorStates extends HomeStates {
 
   ProductByCategoryErrorStates({required this.message});
 }
+
+
+  final class FavoriteChanges extends HomeStates {}
+
+  final class SearchLoading extends HomeStates {}
+
+  final class SearchSuccess extends HomeStates {
+
+    final List<Items>? search;
+
+    SearchSuccess({required this.search});
+  }
+
+  final class SearchError extends HomeStates {
+
+    final String message;
+
+    SearchError({required this.message});
+
+     
+  }
