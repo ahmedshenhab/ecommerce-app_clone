@@ -1,26 +1,29 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecomerce_app/core/style/app_color.dart';
-import 'package:ecomerce_app/module/details_screen/widgets/top_bar_details_screen.dart';
-import 'package:ecomerce_app/module/home/cubit/cubit.dart';
-import 'package:ecomerce_app/module/home/widgets/drawer.dart';
-import 'package:ecomerce_app/module/home/widgets/search_bar.dart';
+import 'package:ecomerce_app/module/home/models/product_by_category_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class DetailsScreen extends StatelessWidget {
-  const DetailsScreen({super.key});
-  static const String detailScreen = '/details-screen';
+class ShowAllProductScreen extends StatelessWidget {
+  const ShowAllProductScreen({
+    super.key,
+    required this.product,
+    required this.name,
+  });
+  static const String showAllProductScreen = '/showAllProductScreen';
+  final List<Products>? product;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('الالكترونيات'),
+        title: Text(name),
 
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      key: BlocProvider.of<HomeCubit>(context).scafoldKey,
+
       // resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -28,8 +31,6 @@ class DetailsScreen extends StatelessWidget {
           // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // (),
-
-
             SizedBox(height: 10.h),
 
             Container(
@@ -63,25 +64,6 @@ class DetailsScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 7.h,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.r),
-                      border: Border.all(color: AppColor.gray, width: 0.5.w),
-                      color: Colors.white,
-                    ),
-                    child: Text(
-                      'التليفزيونات والاكسسوارات',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontSize: 13.sp,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -92,7 +74,7 @@ class DetailsScreen extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
-                itemCount: 4,
+                itemCount: product?.length ?? 0,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   childAspectRatio: 0.7.h,
                   crossAxisSpacing: 10.h,
@@ -131,9 +113,16 @@ class DetailsScreen extends StatelessWidget {
                                   color: Colors.transparent,
                                 ),
 
-                                child: Image.network(
+                                child: CachedNetworkImage(
                                   fit: BoxFit.cover,
-                                  'https://help.rangeme.com/hc/article_attachments/360006928633/what_makes_a_good_product_image.jpg',
+                                  imageUrl: product?[index].imageCover ?? '',
+                                  placeholder:
+                                      (context, url) => const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                  errorWidget:
+                                      (context, url, error) =>
+                                          const Icon(Icons.error),
                                 ),
                               ),
                               Icon(
@@ -148,7 +137,7 @@ class DetailsScreen extends StatelessWidget {
                           Text(
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
-                            'اسم المنتج',
+                            product?[index].name ?? 'default',
                             style: Theme.of(
                               context,
                             ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
@@ -157,7 +146,7 @@ class DetailsScreen extends StatelessWidget {
                           Text(
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
-                            ' سعر المنتج',
+                            "${product?[index].price ?? '0'} ج.م",
                             style: Theme.of(
                               context,
                             ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
