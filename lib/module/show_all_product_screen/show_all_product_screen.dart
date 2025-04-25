@@ -89,7 +89,7 @@ class ShowAllProductScreen extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder:
                                       (context) => DetailsScreen(
-                                        product: product?[index],
+                                        product: product?[index]??Products(),
                                       ),
                                 ),
                               );

@@ -19,13 +19,15 @@ class TopBar extends StatelessWidget {
             padding: EdgeInsets.all(0),
             alignment: AlignmentDirectional(1.5.w, -2.2.h),
             // offset: Offset(10.w, -10.h),
-            label: Text(
-              // textAlign: TextAlign.center,
-              '1',
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: Colors.black,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
+            label: InkWell(
+              child: Text(
+                // textAlign: TextAlign.center,
+                '1',
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Colors.black,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             backgroundColor: Colors.transparent,

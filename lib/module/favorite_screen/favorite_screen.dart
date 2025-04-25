@@ -6,6 +6,7 @@ import 'package:ecomerce_app/core/network/local/sql/sqldb.dart';
 import 'package:ecomerce_app/core/style/app_color.dart';
 import 'package:ecomerce_app/module/details_screen/details_screen.dart';
 import 'package:ecomerce_app/module/home/cubit/cubit.dart';
+import 'package:ecomerce_app/module/home/data/models/product_by_category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,10 +34,10 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     final data =
         await db
             .getAllProducts(); // Ensure you have this method in DatabaseHelper
-    
-      favoriteItems = data;
 
-      isLoading = false;
+    favoriteItems = data;
+
+    isLoading = false;
     // ignore: use_build_context_synchronously
     BlocProvider.of<HomeCubit>(context).changeFavorite();
   }
@@ -56,7 +57,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             ),
           ),
         ],
-        title: Text(''),
+        title: Text('المفضله'),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
@@ -73,29 +74,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.r),
                 color: AppColor.gray.withAlpha(33),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 7.h,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.r),
-                      border: Border.all(color: AppColor.gray, width: 0.5.w),
-                      color: Colors.white,
-                    ),
-                    child: Text(
-                      'اجهزه صوتيه',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontSize: 12.sp,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ),
             SizedBox(height: 20.h),
@@ -116,6 +94,17 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                     ),
                     itemBuilder: (context, index) {
                       final item = favoriteItems[index];
+                      final Products product = Products(
+                       
+                        id: item.id,
+                        name: item.name,
+                        price: item.price,
+                        imageCover: item.imageUrl,
+                      );
+                      log('item hiiiiii: ${item.imageUrl}');
+
+                      log('product hiiiiii: ${product.price}');
+
                       return Container(
                         padding: EdgeInsets.only(
                           top: 5.h,
@@ -142,6 +131,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                       MaterialPageRoute(
                                         builder:
                                             (context) => DetailsScreen(
+                                              product: product,
                                               // Pass item if needed
                                             ),
                                       ),

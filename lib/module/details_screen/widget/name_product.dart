@@ -4,10 +4,12 @@ import 'package:ecomerce_app/core/di/di.dart'; // Assuming dependency injection 
 import 'package:ecomerce_app/core/network/local/sql/sqldb.dart'; // Import DatabaseHelper
 
 class NameProduct extends StatefulWidget {
-  const NameProduct({super.key, required this.name, required this.productId});
+  const NameProduct({super.key, required this.name, required this.productId, this.price, this.image});
 
-  final String name;
-  final int productId; 
+  final String? name;
+  final int? productId;
+  final double? price;
+  final String? image;
   // Passing product ID for database operations
 
   @override
@@ -16,49 +18,51 @@ class NameProduct extends StatefulWidget {
 
 class _NameProductState extends State<NameProduct> {
   bool isFavorite = false;
-
+  late final Product product;
   @override
   void initState() {
     super.initState();
-    _checkIfFavorite();
+    product = Product(
+      id: widget.productId,
+      name: widget.name??'',
+      price:
+          widget.price?.toDouble() ?? 0.0,
+      imageUrl: widget.image ?? '',
+    );
+    checkIfFavorite();
   }
 
-  // Check if the product is in the database (favorite)
-  Future<void> _checkIfFavorite() async {
-    final db = getIt<DatabaseHelper>();
-    final allProducts = await db.getAllProducts();
-
-    for (var product in allProducts) {
-      if (product.id == widget.productId) {
-        setState(() {
-          isFavorite = true; // Product is found, mark as favorite
-        });
-        break;
-      }
+  void checkIfFavorite() async {
+    final favorites = await DatabaseHelper().getAllProducts();
+    if (!mounted) {
+      return; // <- prevent setState if widget is no longer in the tree
     }
-  }
-
-  // Toggle favorite status (add/remove from database)
-  Future<void> _toggleFavorite() async {
-    final db = getIt<DatabaseHelper>();
-
-    if (isFavorite) {
-      // Remove from database
-      await db.deleteProduct(widget.productId);
-    } else {
-      // Add to database
-      await db.insertProduct(
-        Product(
-          id: widget.productId,
-          name: widget.name,
-          price: 0.0, // Default price, can be adjusted if needed
-          imageUrl: '', // Default image URL, can be adjusted if needed
-        ),
-      );
-    }
-
     setState(() {
-      isFavorite = !isFavorite; // Toggle the favorite state
+      isFavorite = favorites.any(
+        (p) =>
+            p.name == product.name &&
+            p.price == product.price &&
+            p.imageUrl == product.imageUrl,
+      );
+    });
+  }
+
+  void toggleFavorite() async {
+    final db = getIt<DatabaseHelper>();
+    if (isFavorite) {
+      final all = await db.getAllProducts();
+      final match = all.firstWhere(
+        (p) =>
+            p.name == product.name &&
+            p.price == product.price &&
+            p.imageUrl == product.imageUrl,
+      );
+      await db.deleteProduct(match.id!);
+    } else {
+      await db.insertProduct(product);
+    }
+    setState(() {
+      isFavorite = !isFavorite;
     });
   }
 
@@ -73,10 +77,10 @@ class _NameProductState extends State<NameProduct> {
             color: isFavorite ? Colors.red : Colors.grey,
             size: 30.w,
           ),
-          onPressed: _toggleFavorite,
+          onPressed: toggleFavorite,
         ),
         Text(
-          widget.name,
+          widget.name??'',
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
             fontWeight: FontWeight.w800,
             fontSize: 22.sp,

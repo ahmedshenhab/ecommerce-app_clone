@@ -7,11 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ecomerce_app/core/network/local/sql/sqldb.dart'; // Make sure this is correct
 
 class ITEMOFROW extends StatefulWidget {
-  const ITEMOFROW({
-    super.key,
-    required this.categoryData,
-    required this.index,
-  });
+  const ITEMOFROW({super.key, required this.categoryData, required this.index});
 
   final CategoryData categoryData;
   final int index;
@@ -28,8 +24,10 @@ class _ITEMOFROWState extends State<ITEMOFROW> {
   void initState() {
     super.initState();
     product = Product(
+      id: widget.categoryData.products?[widget.index].id ?? 0,
       name: widget.categoryData.products?[widget.index].name ?? '',
-      price: widget.categoryData.products?[widget.index].price?.toDouble() ?? 0.0,
+      price:
+          widget.categoryData.products?[widget.index].price?.toDouble() ?? 0.0,
       imageUrl: widget.categoryData.products?[widget.index].imageCover ?? '',
     );
     checkIfFavorite();
@@ -37,18 +35,29 @@ class _ITEMOFROWState extends State<ITEMOFROW> {
 
   void checkIfFavorite() async {
     final favorites = await DatabaseHelper().getAllProducts();
+    if (!mounted) {
+      return; // <- prevent setState if widget is no longer in the tree
+    }
     setState(() {
-      isFavorite = favorites.any((p) =>
-          p.name == product.name && p.price == product.price && p.imageUrl == product.imageUrl);
+      isFavorite = favorites.any(
+        (p) =>
+            p.name == product.name &&
+            p.price == product.price &&
+            p.imageUrl == product.imageUrl,
+      );
     });
   }
 
   void toggleFavorite() async {
-    final db =   getIt<DatabaseHelper>();
+    final db = getIt<DatabaseHelper>();
     if (isFavorite) {
       final all = await db.getAllProducts();
-      final match = all.firstWhere((p) =>
-          p.name == product.name && p.price == product.price && p.imageUrl == product.imageUrl);
+      final match = all.firstWhere(
+        (p) =>
+            p.name == product.name &&
+            p.price == product.price &&
+            p.imageUrl == product.imageUrl,
+      );
       await db.deleteProduct(match.id!);
     } else {
       await db.insertProduct(product);
@@ -85,7 +94,9 @@ class _ITEMOFROWState extends State<ITEMOFROW> {
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
                   imageUrl: product.imageUrl,
-                  placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                  placeholder:
+                      (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
@@ -104,14 +115,18 @@ class _ITEMOFROWState extends State<ITEMOFROW> {
             product.name,
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
           ),
           SizedBox(height: 15.h),
           Text(
             "${product.price.toStringAsFixed(0)} ج م",
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
           ),
           SizedBox(height: 15.h),
           InkWell(
@@ -127,14 +142,18 @@ class _ITEMOFROWState extends State<ITEMOFROW> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Icon(Icons.add_shopping_cart, color: Colors.white, size: 25.w),
+                  Icon(
+                    Icons.add_shopping_cart,
+                    color: Colors.white,
+                    size: 25.w,
+                  ),
                   Text(
                     'اضف الي السله',
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontSize: 16.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                        ),
+                      fontSize: 16.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ],
               ),

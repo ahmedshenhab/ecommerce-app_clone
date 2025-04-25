@@ -1,9 +1,7 @@
-
 import 'package:ecomerce_app/core/di/di.dart';
 import 'package:ecomerce_app/core/style/app_color.dart';
 import 'package:ecomerce_app/module/details_screen/cubit/details_screen_cubit.dart';
 import 'package:ecomerce_app/module/details_screen/cubit/details_screen_state.dart';
-import 'package:ecomerce_app/module/details_screen/data/models/size_model.dart';
 import 'package:ecomerce_app/module/details_screen/data/repo/repo_details_screen.dart';
 import 'package:ecomerce_app/module/details_screen/widget/description_product.dart';
 import 'package:ecomerce_app/module/details_screen/widget/details_appbar.dart';
@@ -22,7 +20,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class DetailsScreen extends StatefulWidget {
   const DetailsScreen({super.key, this.product});
   final Products? product;
-  
 
   @override
   State<DetailsScreen> createState() => _DetailsScreenState();
@@ -30,10 +27,7 @@ class DetailsScreen extends StatefulWidget {
 
 class _DetailsScreenState extends State<DetailsScreen> {
   int? selectedColorIndex;
-  List<DataSize>? currentSizes;
-  // Sample image URLs (you can replace with real product data)
-
-  // This will hold the currently selected image
+  // List<DataSize>? currentSizes;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +80,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 12.w),
                       child: Column(
                         children: [
-                          NameProduct(name: widget.product!.name ?? 'default',productId:   widget.product!.id!,),
+                          NameProduct(
+                            image: widget.product!.imageCover ?? '',
+                            price: widget.product!.price ?? 0,
+                            name: widget.product!.name ?? 'default',
+                            productId: widget.product!.id!,
+                          ),
                           SizedBox(height: 15.h),
 
                           /// Product Description
@@ -151,6 +150,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
                           //القياس
                           BlocBuilder<Detailsscreencubit, DetailsscreenState>(
+                            buildWhen:
+                                (previous, current) =>
+                                    current is DetailsSizeLoadingState ||
+                                    current is DetailsSizeErrorState ||
+                                    current is DetailsSizeSuccessState,
                             builder: (context, state) {
                               if (state is DetailsSizeLoadingState) {
                                 return const Center(
@@ -247,13 +251,26 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                   Detailsscreencubit,
                                   DetailsscreenState
                                 >(
+                                  buildWhen:
+                                      (previous, current) =>
+                                          current
+                                              is DetailsQuantityChangesState,
                                   builder: (context, state) {
-                                    return Text(
-                                      context
-                                          .read<Detailsscreencubit>()
-                                          .quantity
-                                          .toString(),
-                                    );
+                                    if (state is DetailsQuantityChangesState) {
+                                      return Text(
+                                        context
+                                            .read<Detailsscreencubit>()
+                                            .quantity
+                                            .toString(),
+                                      );
+                                    } else {
+                                      return Text(
+                                        context
+                                            .read<Detailsscreencubit>()
+                                            .quantity
+                                            .toString(),
+                                      );
+                                    }
                                   },
                                 ),
                               ),

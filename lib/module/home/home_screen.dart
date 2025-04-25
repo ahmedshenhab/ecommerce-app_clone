@@ -85,7 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                   child: Container(
-
                     height: 50.h,
                     decoration: BoxDecoration(
                       color: AppColor.gray.withValues(alpha: 0.13),
@@ -95,21 +94,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: Icon(
-                            Icons.search,
-                            color: AppColor.gray,
-                          ),
+                          child: Icon(Icons.search, color: AppColor.gray),
                         ),
                         Text(
                           'ابحث عن منتج',
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium!.copyWith(
                             fontWeight: FontWeight.w400,
                             fontSize: 16.sp,
                             color: AppColor.gray,
-                          
-                        
-                    ))])
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
                 ),
               ),
               SizedBox(height: 30.h),
@@ -174,7 +173,40 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                       SizedBox(height: 45.h),
-                      Offers(),
+                      BlocBuilder<HomeCubit, HomeStates>(
+                        buildWhen:
+                            (previous, current) =>
+                                current is ProductByCategoryLoadingStates ||
+                                current is ProductByCategoryErrorStates ||
+                                current is ProductByCategorySuccessStates,
+                        builder: (context, state) {
+                          if (state is ProductByCategoryLoadingStates) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (state is ProductByCategoryErrorStates) {
+                            return Center(child: Text(state.message));
+                          } else if (state is ProductByCategorySuccessStates) {
+                            if (state.productByCategory.isEmpty) {
+                              return const Center(
+                                child: Text('No products found'),
+                              );
+                            }
+
+
+                            final offer = state.productByCategory[1];
+                            return Offers(offer: offer,);
+                          }
+                         else {
+                            
+                            return const Center(
+                              child: Text('wait to show preparing all '),
+                            );
+                          }
+
+                          
+                        },
+                      ),
                       SizedBox(height: 70.h),
                       AlmostDone(),
                       SizedBox(height: 70.h),

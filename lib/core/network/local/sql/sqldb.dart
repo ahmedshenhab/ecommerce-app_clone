@@ -18,7 +18,7 @@ class DatabaseHelper {
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER PRIMARY KEY, -- Removed AUTOINCREMENT
             name TEXT,
             price REAL,
             imageUrl TEXT
@@ -28,7 +28,7 @@ class DatabaseHelper {
     );
   }
 
-   Future<int> insertProduct(Product product) async {
+  Future<int> insertProduct(Product product) async {
     final db = await database;
     return await db.insert(
       'products',
@@ -37,18 +37,18 @@ class DatabaseHelper {
     );
   }
 
-   Future<List<Product>> getAllProducts() async {
+  Future<List<Product>> getAllProducts() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('products');
     return maps.map((map) => Product.fromMap(map)).toList();
   }
 
-   Future<int> deleteProduct(int id) async {
+  Future<int> deleteProduct(int id) async {
     final db = await database;
     return await db.delete('products', where: 'id = ?', whereArgs: [id]);
   }
 
-   Future<void> closeDatabase() async {
+  Future<void> closeDatabase() async {
     final db = await database;
     if (db.isOpen) await db.close();
   }
@@ -61,7 +61,7 @@ class Product {
   final String imageUrl;
 
   Product({
-    this.id,
+    required this.id, // Make sure it's always passed from API
     required this.name,
     required this.price,
     required this.imageUrl,
