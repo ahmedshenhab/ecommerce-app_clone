@@ -1,7 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
+
 import 'package:ecomerce_app/core/style/app_color.dart';
+import 'package:ecomerce_app/module/home/cubit/cubit.dart';
+import 'package:ecomerce_app/module/home/cubit/states.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeBanner extends StatefulWidget {
@@ -12,21 +15,19 @@ class HomeBanner extends StatefulWidget {
 }
 
 class _HomeBannerState extends State<HomeBanner> {
-  List<String> messages = [
-    'يوجد خصم 20% على قسم الإلكترونيات',
-    'أهلاً بك في متجر MY HOME',
-  ];
   int _currentIndex = 0;
   Timer? _timer;
 
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
-      setState(() {
-        _currentIndex = (_currentIndex + 1) % messages.length;
+  void _startTimer(List<String> messages) {
+    _timer?.cancel();
+    if (messages.length > 1) {
+      _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        if (!mounted) return;
+        setState(() {
+          _currentIndex = (_currentIndex + 1) % messages.length;
+        });
       });
-    });
+    }
   }
 
   @override
@@ -37,29 +38,51 @@ class _HomeBannerState extends State<HomeBanner> {
 
   @override
   Widget build(BuildContext context) {
-    log('build home banner');
-    log(_currentIndex.toString());
+    return BlocBuilder<HomeCubit, HomeStates>(
+      buildWhen:
+          (previous, current) =>
+              current is NewsSuccessStates ||
+              current is NewsErrorStates ||
+              current is NewsLoadingStates,
+      builder: (context, state) {
+        if (state is NewsLoadingStates) {
+          return const SizedBox.shrink(); // Or a shimmer/loading widget
+        } else if (state is NewsSuccessStates) {
+          final messages = state.news;
 
-    return AnimatedSwitcher(
-      duration: Duration(milliseconds: 500),
-      transitionBuilder:
-          (child, animation) =>
-              FadeTransition(opacity: animation, child: child),
-      child: Container(
-        key: ValueKey<String>(messages[_currentIndex]),
-        color: AppColor.grey,
-        padding: EdgeInsets.all(8),
-        child: Center(
-          child: Text(
-            maxLines: 1,
-            messages[_currentIndex],
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
+          if (messages.isEmpty) {
+            return const SizedBox.shrink(); // nothing to show
+          }
+
+          _startTimer(messages); // start timer only when messages are available
+
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            transitionBuilder:
+                (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
+            child: Container(
+              key: ValueKey<String>(messages[_currentIndex]),
+              color: AppColor.grey,
+              padding: const EdgeInsets.all(8),
+              child: Center(
+                child: Text(
+                  messages[_currentIndex],
+                  maxLines: 1,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          );
+        } else if (state is NewsErrorStates) {
+          return SizedBox.shrink();
+        } else {
+          return const SizedBox.shrink(); // Fallback or initial state
+        }
+      },
     );
   }
 }

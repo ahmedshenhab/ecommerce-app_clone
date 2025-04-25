@@ -1,5 +1,9 @@
 import 'package:ecomerce_app/core/style/app_color.dart';
+import 'package:ecomerce_app/module/favorite_screen/favorite_screen.dart';
+import 'package:ecomerce_app/module/home/cubit/cubit.dart';
+import 'package:ecomerce_app/module/show_all_product_screen/show_all_product_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -8,6 +12,7 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = BlocProvider.of<HomeCubit>(context);
     return SafeArea(
       child: Drawer(
         backgroundColor: AppColor.white,
@@ -24,22 +29,31 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
 
+            Divider(
+              color: Colors.black.withValues(alpha: 0.5),
+              thickness: 0.3.h,
+
+              endIndent: 15.w,
+              indent: 15.w,
+              height: 30.h,
+            ),
+
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
 
               children: [
-                Divider(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  thickness: 0.3.h,
+                SizedBox(height: 20),
 
-                  endIndent: 15.w,
-                  indent: 15.w,
-                  height: 30.h,
-                ),
                 Padding(
                   padding: EdgeInsets.only(right: 20.w),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => FavoriteScreen(),
+                        ),
+                      );
+                    },
                     child: Text(
                       'المفضلة',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -49,75 +63,69 @@ class CustomDrawer extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                Divider(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  thickness: 0.5.h,
-
-                  endIndent: 15.w,
-                  indent: 15.w,
-                  height: 30.h,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 20.w),
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'الكل',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
                 Divider(
                   color: Colors.black.withValues(alpha: 0.5),
                   thickness: 0.3.h,
-                  endIndent: 15.w,
-                  indent: 15.w,
-                  height: 30.h,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 20.w),
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'المطبخ',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                Divider(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  thickness: 0.5.h,
-                  endIndent: 15.w,
-                  indent: 15.w,
-                  height: 30.h,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 20.w),
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'الالكترونيات',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                Divider(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  thickness: 0.5.h,
 
                   endIndent: 15.w,
                   indent: 15.w,
                   height: 30.h,
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  child: ListView.builder(
+                    itemCount: cubit.productByCategory?.length ?? 0,
+
+                    itemBuilder:
+                        (context, index) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 20.w),
+                              child: GestureDetector(
+                                onTap: () {
+                                  cubit.scafoldKey.currentState!.closeDrawer();
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ShowAllProductScreen(
+                                            name:
+                                                cubit
+                                                    .productByCategory?[index]
+                                                    .name ??
+                                                'default',
+                                            product:
+                                                cubit
+                                                    .productByCategory?[index]
+                                                    .products ??
+                                                [],
+                                          ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  cubit.productByCategory?[index].name ??
+                                      'default',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium!.copyWith(
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              thickness: 0.5.h,
+
+                              endIndent: 15.w,
+                              indent: 15.w,
+                              height: 30.h,
+                            ),
+                          ],
+                        ),
+                  ),
                 ),
               ],
             ),

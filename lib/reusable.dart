@@ -60,10 +60,10 @@ TextFormField buildLoginField(
       //   color: AppColor.fieldColorHint,
       // ),
       // border: OutlineInputBorder(),
-      enabledBorder: UnderlineInputBorder(
+      enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: Colors.grey.shade300, width: 1.w),
       ),
-      focusedBorder: UnderlineInputBorder(
+      focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(color: AppColor.grey),
       ),
     ),

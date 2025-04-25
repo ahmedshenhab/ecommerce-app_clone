@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppTheme {
   static ThemeData lighTheme = ThemeData(
+    appBarTheme: AppBarTheme(backgroundColor: AppColor.white),
     // badgeTheme: BadgeThemeData(textColor: Colors.black, largeSize: 100),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(

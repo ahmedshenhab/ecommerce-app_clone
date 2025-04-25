@@ -1,175 +1,294 @@
+import 'package:ecomerce_app/core/di/di.dart';
 import 'package:ecomerce_app/core/style/app_color.dart';
-import 'package:ecomerce_app/module/details_screen/widgets/top_bar_details_screen.dart';
-import 'package:ecomerce_app/module/home/cubit/cubit.dart';
-import 'package:ecomerce_app/module/home/widgets/drawer.dart';
-import 'package:ecomerce_app/module/home/widgets/search_bar.dart';
+import 'package:ecomerce_app/module/details_screen/cubit/details_screen_cubit.dart';
+import 'package:ecomerce_app/module/details_screen/cubit/details_screen_state.dart';
+import 'package:ecomerce_app/module/details_screen/data/repo/repo_details_screen.dart';
+import 'package:ecomerce_app/module/details_screen/widget/description_product.dart';
+import 'package:ecomerce_app/module/details_screen/widget/details_appbar.dart';
+import 'package:ecomerce_app/module/details_screen/widget/details_color.dart';
+import 'package:ecomerce_app/module/details_screen/widget/details_image.dart';
+import 'package:ecomerce_app/module/details_screen/widget/details_sizes.dart';
+import 'package:ecomerce_app/module/details_screen/widget/name_product.dart';
+import 'package:ecomerce_app/module/details_screen/widget/policies.dart';
+import 'package:ecomerce_app/module/details_screen/widget/price_product.dart';
+import 'package:ecomerce_app/module/home/data/models/product_by_category_model.dart';
+import 'package:ecomerce_app/module/home/widgets/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class DetailsScreen extends StatelessWidget {
-  const DetailsScreen({super.key});
-  static const String detailScreen = '/details-screen';
+class DetailsScreen extends StatefulWidget {
+  const DetailsScreen({super.key, this.product});
+  final Products? product;
+
+  @override
+  State<DetailsScreen> createState() => _DetailsScreenState();
+}
+
+class _DetailsScreenState extends State<DetailsScreen> {
+  int? selectedColorIndex;
+  // List<DataSize>? currentSizes;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('الالكترونيات'),
-
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      key: BlocProvider.of<HomeCubit>(context).scafoldKey,
-      // resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // (),
-
-
-            SizedBox(height: 10.h),
-
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10.w),
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              height: 55.h,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.r),
-                color: AppColor.gray.withValues(alpha: 0.13),
-              ),
-              child: Row(
-                spacing: 10,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 7.h,
+    return BlocProvider(
+      create:
+          (context) =>
+              Detailsscreencubit(repoDetailsScreen: getIt<RepoDetailsScreen>())
+                ..getProductImage(id: widget.product!.id!)
+                ..getProductcolors(id: widget.product!.id!),
+      child: BlocBuilder<Detailsscreencubit, DetailsscreenState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: detail_appBar(context),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    BlocBuilder<Detailsscreencubit, DetailsscreenState>(
+                      buildWhen:
+                          (previous, current) =>
+                              current is DetailsImageLoadingState ||
+                              current is DetailsImageErrorState ||
+                              current is DetailsImageSuccessState,
+                      builder: (context, state) {
+                        if (state is DetailsImageLoadingState) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (state is DetailsImageErrorState) {
+                          return DetailsImage(images: []);
+                        } else if (state is DetailsImageSuccessState) {
+                          final images = state.images;
+                          return DetailsImage(images: images);
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.r),
-                      border: Border.all(color: AppColor.gray, width: 0.5.w),
-                      color: Colors.white,
-                    ),
-                    child: Text(
-                      'اجهزه صوتيه',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontSize: 12.sp,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
 
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 7.h,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.r),
-                      border: Border.all(color: AppColor.gray, width: 0.5.w),
-                      color: Colors.white,
-                    ),
-                    child: Text(
-                      'التليفزيونات والاكسسوارات',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontSize: 13.sp,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20.h),
+                    /// Main Product Image
+                    SizedBox(height: 15.h),
 
-            Expanded(
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                itemCount: 4,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 0.7.h,
-                  crossAxisSpacing: 10.h,
-                  crossAxisCount: 2,
-                  mainAxisExtent: 330.h,
-                  mainAxisSpacing: 15.w,
-                ),
-                itemBuilder:
-                    (context, index) => Container(
-                      padding: EdgeInsets.only(
-                        top: 5.h,
-
-                        left: 10.w,
-                        right: 10.w,
-                      ),
-                      width: 220.w,
-                      height: 310.h,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.r),
-                        color: AppColor.gray.withValues(alpha: 0.13),
-                      ),
-
+                    /// Product Name
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Stack(
-                            alignment: Alignment.topRight,
+                          NameProduct(
+                            image: widget.product!.imageCover ?? '',
+                            price: widget.product!.price ?? 0,
+                            name: widget.product!.name ?? 'default',
+                            productId: widget.product!.id!,
+                          ),
+                          SizedBox(height: 15.h),
+
+                          /// Product Description
+                          DescriptionProduct(
+                            description:
+                                widget.product!.description ?? 'default',
+                          ),
+
+                          SizedBox(height: 30.h),
+
+                          // Price
+                          PriceProduct(
+                            price:
+                                widget.product!.price?.toString() ?? 'default',
+                          ),
+                          SizedBox(height: 30.h),
+
+                          // Color Selection
+                          BlocBuilder<Detailsscreencubit, DetailsscreenState>(
+                            buildWhen:
+                                (previous, current) =>
+                                    current is DetailsColorLoadingState ||
+                                    current is DetailsColorErrorState ||
+                                    current is DetailsColorSuccessState,
+                            builder: (context, state) {
+                              if (state is DetailsColorLoadingState) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else if (state is DetailsColorErrorState) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'حدث خطأ أثناء تحميل الألوان.',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                );
+                              } else if (state is DetailsColorSuccessState) {
+                                final colors = state.colors;
+                                return DetailsColor(
+                                  colors: colors,
+                                  selectedIndex: selectedColorIndex,
+                                  onColorSelected: (index, color) {
+                                    setState(() {
+                                      selectedColorIndex = index;
+                                    });
+                                    context.read<Detailsscreencubit>().getSize(
+                                      id: color.id!,
+                                    ); // 👈 Assuming color.id is the id needed for sizes
+                                  },
+                                );
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            },
+                          ),
+
+                          SizedBox(height: 18.h),
+
+                          //القياس
+                          BlocBuilder<Detailsscreencubit, DetailsscreenState>(
+                            buildWhen:
+                                (previous, current) =>
+                                    current is DetailsSizeLoadingState ||
+                                    current is DetailsSizeErrorState ||
+                                    current is DetailsSizeSuccessState,
+                            builder: (context, state) {
+                              if (state is DetailsSizeLoadingState) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else if (state is DetailsSizeErrorState) {
+                                return DetailsSizes(sizes: []);
+                              } else if (state is DetailsSizeSuccessState) {
+                                final sizes = state.sizes;
+                                return DetailsSizes(sizes: sizes ?? []);
+                              } else {}
+
+                              return DetailsSizes();
+                            },
+                          ),
+
+                          SizedBox(height: 18.h),
+
+                          // quantity
+                          Align(
+                            alignment: Alignment.centerRight,
+
+                            child: Text(
+                              'الكمية',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium!.copyWith(
+                                fontWeight: FontWeight.w800,
+
+                                fontSize: 24.sp,
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 18.h),
+                          Row(
+                            spacing: 10.w,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Container(
-                                height: 160.h,
-                                width: double.infinity,
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.r),
-                                  color: Colors.transparent,
-                                ),
+                                alignment: Alignment.center,
 
-                                child: Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://help.rangeme.com/hc/article_attachments/360006928633/what_makes_a_good_product_image.jpg',
+                                height: 40.h,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: AppColor.black.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                    width: 1.r,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      padding: EdgeInsets.all(0),
+                                      onPressed: () {
+                                        context
+                                            .read<Detailsscreencubit>()
+                                            .changeQuantity('-');
+                                      },
+                                      icon: Icon(Icons.remove, size: 24.sp),
+                                    ),
+                                    IconButton(
+                                      padding: EdgeInsets.all(0),
+
+                                      onPressed: () {
+                                        context
+                                            .read<Detailsscreencubit>()
+                                            .changeQuantity('+');
+                                      },
+                                      icon: Icon(Icons.add, size: 24.sp),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Icon(
-                                Icons.favorite_border,
-                                color: Colors.red,
-                                size: 30.w,
+
+                              Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                height: 40.h,
+                                // width: ,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: AppColor.black.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                    width: 1.r,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                child: BlocBuilder<
+                                  Detailsscreencubit,
+                                  DetailsscreenState
+                                >(
+                                  buildWhen:
+                                      (previous, current) =>
+                                          current
+                                              is DetailsQuantityChangesState,
+                                  builder: (context, state) {
+                                    if (state is DetailsQuantityChangesState) {
+                                      return Text(
+                                        context
+                                            .read<Detailsscreencubit>()
+                                            .quantity
+                                            .toString(),
+                                      );
+                                    } else {
+                                      return Text(
+                                        context
+                                            .read<Detailsscreencubit>()
+                                            .quantity
+                                            .toString(),
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
                             ],
                           ),
 
-                          SizedBox(height: 15.h),
-                          Text(
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            'اسم المنتج',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
-                          ),
-                          SizedBox(height: 15.h),
-                          Text(
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            ' سعر المنتج',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
-                          ),
-
-                          SizedBox(height: 15.h),
+                          SizedBox(height: 25.h),
                           InkWell(
                             onTap: () {},
                             child: Container(
-                              height: 40.h,
+                              height: 45.h,
+
+                              width: MediaQuery.of(context).size.width * 0.5,
                               decoration: BoxDecoration(
-                                color: AppColor.black,
+                                border: Border.all(
+                                  color: AppColor.black.withValues(alpha: 0.3),
+                                ),
+                                color: AppColor.gray.withValues(alpha: 0.18),
                                 borderRadius: BorderRadius.circular(6.r),
                               ),
                               child: Row(
@@ -177,19 +296,15 @@ class DetailsScreen extends StatelessWidget {
                                     MainAxisAlignment.spaceAround,
                                 children: [
                                   Icon(
-                                    Icons.add_shopping_cart,
-                                    color: Colors.white,
+                                    Icons.add_shopping_cart_rounded,
                                     size: 25.w,
                                   ),
                                   Text(
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
                                     'اضف الي السله',
                                     style: Theme.of(
                                       context,
                                     ).textTheme.bodyMedium!.copyWith(
                                       fontSize: 16.sp,
-                                      color: Colors.white,
                                       fontWeight: FontWeight.w900,
                                     ),
                                   ),
@@ -197,13 +312,22 @@ class DetailsScreen extends StatelessWidget {
                               ),
                             ),
                           ),
+
+                          SizedBox(height: 30.h),
+
+                          Policies(),
                         ],
                       ),
                     ),
+                    SizedBox(height: 30.h),
+
+                    Footer(),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

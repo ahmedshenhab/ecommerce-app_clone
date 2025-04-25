@@ -1,9 +1,12 @@
 import 'package:ecomerce_app/core/style/app_color.dart';
+import 'package:ecomerce_app/module/home/data/models/product_by_category_model.dart';
+import 'package:ecomerce_app/module/show_all_product_screen/show_all_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Offers extends StatelessWidget {
-  const Offers({super.key});
+  const Offers({super.key, required this.offer});
+  final CategoryData? offer;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,17 @@ class Offers extends StatelessWidget {
 
               backgroundColor: WidgetStateProperty.all(Colors.transparent),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder:
+                      (context) => ShowAllProductScreen(
+                        name: offer!.name ?? 'default',
+                        product: offer!.products ?? [],
+                      ),
+                ),
+              );
+            },
             label: Text(
               'شاهد الكل',
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(

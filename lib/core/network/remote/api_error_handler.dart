@@ -35,7 +35,7 @@ class ApiErrorHandler implements Exception {
           return ApiErrorModel(message: 'something went wrong');
       }
     } else {
-      return ApiErrorModel(message: 'unknown error occured');
+      return ApiErrorModel(message: 'unknown error occured ');
     }
   }
 }
