@@ -84,7 +84,8 @@ class CustomDrawer extends StatelessWidget {
                               padding: EdgeInsets.only(right: 20.w),
                               child: GestureDetector(
                                 onTap: () {
-                                  cubit.scafoldKey.currentState!.closeDrawer();
+                                  // cubit.scafoldKey.currentState!.closeDrawer();
+                                  
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder:

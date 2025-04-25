@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeCubit extends Cubit<HomeStates> {
   HomeCubit(this.repoHome) : super(HomeInitialStates());
-  final scafoldKey = GlobalKey<ScaffoldState>();
+  // final scafoldKey = GlobalKey<ScaffoldState>();
   final controller = TextEditingController();
   final RepoHome repoHome;
   late List<String> newsTitle;

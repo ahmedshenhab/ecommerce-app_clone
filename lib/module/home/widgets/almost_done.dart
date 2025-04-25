@@ -1,9 +1,13 @@
 import 'package:ecomerce_app/core/style/app_color.dart';
+import 'package:ecomerce_app/module/home/data/models/product_by_category_model.dart';
+import 'package:ecomerce_app/module/show_all_product_screen/show_all_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AlmostDone extends StatelessWidget {
-  const AlmostDone({super.key});
+  const AlmostDone({super.key, required this.allmostDone});
+
+  final CategoryData? allmostDone;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,18 @@ class AlmostDone extends StatelessWidget {
 
                   backgroundColor: WidgetStateProperty.all(Colors.transparent),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder:
+                          (context) => ShowAllProductScreen(
+                            name:                 'منتجات شارفت علي الانتهاء',
+
+                            product: allmostDone!.products ?? [],
+                          ),
+                    ),
+                  );
+                },
                 label: Text(
                   'شاهد الكل',
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -58,7 +73,7 @@ class AlmostDone extends StatelessWidget {
             child: ListView.builder(
               padding: EdgeInsets.all(0),
               scrollDirection: Axis.horizontal,
-              itemCount: 11,
+              itemCount: allmostDone!.products?.length ?? 0,
               shrinkWrap: true,
 
               itemBuilder:
@@ -96,7 +111,7 @@ class AlmostDone extends StatelessWidget {
 
                               child: Image.network(
                                 fit: BoxFit.cover,
-                                'https://help.rangeme.com/hc/article_attachments/360006928633/what_makes_a_good_product_image.jpg',
+                                allmostDone!.products![index].imageCover ?? '',
                               ),
                             ),
                             Icon(
@@ -111,7 +126,7 @@ class AlmostDone extends StatelessWidget {
                         Text(
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                          'اسم المنتج',
+                          allmostDone!.products![index].name ?? '',
                           style: Theme.of(
                             context,
                           ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
@@ -120,7 +135,7 @@ class AlmostDone extends StatelessWidget {
                         Text(
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                          ' سعر المنتج',
+                          ' ${allmostDone!.products![index].price} ج.م',
                           style: Theme.of(
                             context,
                           ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),

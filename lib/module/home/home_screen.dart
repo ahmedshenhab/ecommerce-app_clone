@@ -24,6 +24,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final scafoldKey = GlobalKey<ScaffoldState>();
+
   Future<bool> _onWillPop() async {
     return (await showDialog(
           context: context,
@@ -69,13 +71,14 @@ class _HomeScreenState extends State<HomeScreen> {
       onWillPop: _onWillPop,
       child: Scaffold(
         drawer: CustomDrawer(),
-        key: BlocProvider.of<HomeCubit>(context).scafoldKey,
+        // key: BlocProvider.of<HomeCubit>(context).scafoldKey,
+        key: scafoldKey,
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Column(
             children: [
               SizedBox(height: 25.h),
-              TopBar(),
+              TopBar(scafoldKey: scafoldKey),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: InkWell(
@@ -172,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         },
                       ),
-                      SizedBox(height: 45.h),
+                      SizedBox(height: 30.h),
                       BlocBuilder<HomeCubit, HomeStates>(
                         buildWhen:
                             (previous, current) =>
@@ -193,22 +196,45 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             }
 
-
                             final offer = state.productByCategory[1];
-                            return Offers(offer: offer,);
-                          }
-                         else {
-                            
+                            return Offers(offer: offer);
+                          } else {
                             return const Center(
                               child: Text('wait to show preparing all '),
                             );
                           }
-
-                          
                         },
                       ),
                       SizedBox(height: 70.h),
-                      AlmostDone(),
+                      BlocBuilder<HomeCubit, HomeStates>(
+                        buildWhen:
+                            (previous, current) =>
+                                current is ProductByCategoryLoadingStates ||
+                                current is ProductByCategoryErrorStates ||
+                                current is ProductByCategorySuccessStates,
+                        builder: (context, state) {
+                          if (state is ProductByCategoryLoadingStates) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (state is ProductByCategoryErrorStates) {
+                            return Center(child: Text(state.message));
+                          } else if (state is ProductByCategorySuccessStates) {
+                            if (state.productByCategory.isEmpty) {
+                              return const Center(
+                                child: Text('No products found'),
+                              );
+                            }
+
+                            final offer = state.productByCategory[0];
+                            return AlmostDone(allmostDone: offer);
+                          } else {
+                            return const Center(
+                              child: Text('wait to show preparing all '),
+                            );
+                          }
+                        },
+                      ),
                       SizedBox(height: 70.h),
                       Footer(),
                     ],

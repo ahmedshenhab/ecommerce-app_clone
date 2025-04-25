@@ -1,7 +1,6 @@
 import 'package:ecomerce_app/core/style/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 TextFormField buildLoginField(
   BuildContext context, {
@@ -70,16 +69,16 @@ TextFormField buildLoginField(
   );
 }
 
-Future<bool?> buildshowToast({required String msg, required Color color}) {
-  return Fluttertoast.showToast(
-    msg: msg,
-    toastLength: Toast.LENGTH_LONG,
-    gravity: ToastGravity.BOTTOM,
-    backgroundColor: color,
-    textColor: Colors.white,
-    fontSize: 13.0.sp,
-  );
-}
+// Future<bool?> buildshowToast({required String msg, required Color color}) {
+//   return Fluttertoast.showToast(
+//     msg: msg,
+//     toastLength: Toast.LENGTH_LONG,
+//     gravity: ToastGravity.BOTTOM,
+//     backgroundColor: color,
+//     textColor: Colors.white,
+//     fontSize: 13.0.sp,
+//   );
+// }
 
 class CustomElevatedButton extends StatelessWidget {
   const CustomElevatedButton({

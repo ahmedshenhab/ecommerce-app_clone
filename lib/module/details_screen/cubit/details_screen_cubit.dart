@@ -2,6 +2,7 @@ import 'package:ecomerce_app/module/details_screen/cubit/details_screen_state.da
 import 'package:ecomerce_app/module/details_screen/data/repo/repo_details_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+
 class Detailsscreencubit extends Cubit<DetailsscreenState> {
   Detailsscreencubit({required this.repoDetailsScreen})
     : super(DetailsScreenInitialState());
@@ -49,6 +50,8 @@ class Detailsscreencubit extends Cubit<DetailsscreenState> {
       },
     );
   }
+
+ 
 
   void changeQuantity(String value) {
     if (value == '-') {

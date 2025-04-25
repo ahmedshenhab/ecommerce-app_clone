@@ -1,3 +1,4 @@
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecomerce_app/core/di/di.dart';
 import 'package:ecomerce_app/core/style/app_color.dart';
@@ -129,34 +130,25 @@ class _ITEMOFROWState extends State<ITEMOFROW> {
             ).textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
           ),
           SizedBox(height: 15.h),
-          InkWell(
-            onTap: () {
-              // Add to cart logic
-            },
-            child: Container(
-              height: 40.h,
-              decoration: BoxDecoration(
-                color: AppColor.black,
-                borderRadius: BorderRadius.circular(6.r),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Icon(
-                    Icons.add_shopping_cart,
+          Container(
+            height: 40.h,
+            decoration: BoxDecoration(
+              color: AppColor.black,
+              borderRadius: BorderRadius.circular(6.r),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Icon(Icons.add_shopping_cart, color: Colors.white, size: 25.w),
+                Text(
+                  'اشتري الان',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontSize: 16.sp,
                     color: Colors.white,
-                    size: 25.w,
+                    fontWeight: FontWeight.w900,
                   ),
-                  Text(
-                    'اضف الي السله',
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontSize: 16.sp,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],

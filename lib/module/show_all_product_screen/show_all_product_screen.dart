@@ -42,7 +42,7 @@ class ShowAllProductScreen extends StatelessWidget {
       // resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
+        child: product == null|| product!.isEmpty ? const Center(child: Text('لا يوجد منتجات')) :   Column(
           // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // (),
@@ -89,7 +89,7 @@ class ShowAllProductScreen extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder:
                                       (context) => DetailsScreen(
-                                        product: product?[index]??Products(),
+                                        product: product?[index] ?? Products(),
                                       ),
                                 ),
                               );

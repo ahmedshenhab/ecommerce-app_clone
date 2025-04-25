@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:ecomerce_app/core/di/di.dart';
+import 'package:ecomerce_app/core/services/shared_prefrence/cach_helper.dart';
 import 'package:ecomerce_app/core/style/app_color.dart';
+import 'package:ecomerce_app/key_constant.dart';
 import 'package:ecomerce_app/module/details_screen/cubit/details_screen_cubit.dart';
 import 'package:ecomerce_app/module/details_screen/cubit/details_screen_state.dart';
 import 'package:ecomerce_app/module/details_screen/data/repo/repo_details_screen.dart';
@@ -11,6 +15,7 @@ import 'package:ecomerce_app/module/details_screen/widget/details_sizes.dart';
 import 'package:ecomerce_app/module/details_screen/widget/name_product.dart';
 import 'package:ecomerce_app/module/details_screen/widget/policies.dart';
 import 'package:ecomerce_app/module/details_screen/widget/price_product.dart';
+import 'package:ecomerce_app/module/details_screen/widget/show_bottum_sheet/show_bottum_sheet_form.dart';
 import 'package:ecomerce_app/module/home/data/models/product_by_category_model.dart';
 import 'package:ecomerce_app/module/home/widgets/footer.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +33,24 @@ class DetailsScreen extends StatefulWidget {
 class _DetailsScreenState extends State<DetailsScreen> {
   int? selectedColorIndex;
   // List<DataSize>? currentSizes;
+
+  @override
+void initState() {
+  super.initState();
+
+  // Call an async method within initState to save product details
+  _saveProductDetails();
+}
+
+Future<void> _saveProductDetails() async {
+  final product = widget.product;
+  if (product != null) {
+    await CachHelper.setData(key: KeyConstant.productId, value: product.id);
+    await CachHelper.setData(key: KeyConstant.productName, value: product.name);
+    await CachHelper.setData(key: KeyConstant.price, value: product.price);
+    await CachHelper.setData(key: KeyConstant.imageUrl, value: product.imageCover);
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -135,9 +158,18 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     setState(() {
                                       selectedColorIndex = index;
                                     });
-                                    context.read<Detailsscreencubit>().getSize(
-                                      id: color.id!,
-                                    ); // 👈 Assuming color.id is the id needed for sizes
+
+                                    log(' color is ${color.color}');
+                                    CachHelper.setData(
+                                      key: KeyConstant.color,
+                                      value: color.color,
+                                    ).then((_) {
+                                      if (!mounted) return; // 🔒 Safety check
+                                      // ignore: use_build_context_synchronously
+                                      context
+                                          .read<Detailsscreencubit>()
+                                          .getSize(id: color.id!);
+                                    });
                                   },
                                 );
                               } else {
@@ -165,9 +197,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               } else if (state is DetailsSizeSuccessState) {
                                 final sizes = state.sizes;
                                 return DetailsSizes(sizes: sizes ?? []);
-                              } else {}
-
-                              return DetailsSizes();
+                              } else {
+                                return DetailsSizes();
+                              }
                             },
                           ),
 
@@ -212,20 +244,35 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                   children: [
                                     IconButton(
                                       padding: EdgeInsets.all(0),
-                                      onPressed: () {
+                                      onPressed: () async {
                                         context
                                             .read<Detailsscreencubit>()
                                             .changeQuantity('-');
+                                        await CachHelper.setData(
+                                          key: KeyConstant.quantity,
+                                          value:
+                                              context
+                                                  .read<Detailsscreencubit>()
+                                                  .quantity,
+                                        );
                                       },
                                       icon: Icon(Icons.remove, size: 24.sp),
                                     ),
                                     IconButton(
                                       padding: EdgeInsets.all(0),
 
-                                      onPressed: () {
+                                      onPressed: () async {
                                         context
                                             .read<Detailsscreencubit>()
                                             .changeQuantity('+');
+
+                                        await CachHelper.setData(
+                                          key: KeyConstant.quantity,
+                                          value:
+                                              context
+                                                  .read<Detailsscreencubit>()
+                                                  .quantity,
+                                        );
                                       },
                                       icon: Icon(Icons.add, size: 24.sp),
                                     ),
@@ -279,7 +326,55 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
                           SizedBox(height: 25.h),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              final color =
+                                  CachHelper.getData(key: KeyConstant.color)
+                                      as String? ??
+                                  '';
+
+                              final size =
+                                  CachHelper.getData(key: KeyConstant.sizeId)
+                                      as int? ??
+                                  -1;
+
+                              final quantity =
+                                  CachHelper.getData(key: KeyConstant.quantity)
+                                      as int? ??
+                                  -1;
+
+                              if ((color == '' || color.isEmpty) ||
+                                  (size <= 0) ||
+                                  quantity <= 0) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        textAlign: TextAlign.center,
+                                        '   يرجي اختيار القياس واللون والكميه',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(fontSize: 20.sp),
+                                      ),
+                                    );
+                                  },
+                                );
+                              } else {
+                                showModalBottomSheet(
+                                   
+                                  context: context,
+                                  isScrollControlled: true,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(30),
+                                    ),
+                                  ),
+                                  builder:
+                                      (_) =>  ShowBottumSheetForm(),
+                                );
+                              }
+                            },
                             child: Container(
                               height: 45.h,
 
@@ -300,7 +395,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     size: 25.w,
                                   ),
                                   Text(
-                                    'اضف الي السله',
+                                    ' اشتري الان',
                                     style: Theme.of(
                                       context,
                                     ).textTheme.bodyMedium!.copyWith(
@@ -322,7 +417,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     SizedBox(height: 30.h),
 
                     Footer(),
-                  ],
+                     ],
                 ),
               ),
             ),

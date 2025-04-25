@@ -6,7 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class TopBar extends StatelessWidget {
-  const TopBar({super.key});
+  const TopBar({super.key, required this.scafoldKey});
+  final GlobalKey<ScaffoldState> scafoldKey;
 
   @override
   Widget build(BuildContext context) {
@@ -15,24 +16,7 @@ class TopBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Badge(
-            padding: EdgeInsets.all(0),
-            alignment: AlignmentDirectional(1.5.w, -2.2.h),
-            // offset: Offset(10.w, -10.h),
-            label: InkWell(
-              child: Text(
-                // textAlign: TextAlign.center,
-                '1',
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: Colors.black,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            backgroundColor: Colors.transparent,
-            child: Icon(Icons.add_shopping_cart_sharp),
-          ),
+          
 
           SizedBox(
             width: 250.w,
@@ -51,20 +35,21 @@ class TopBar extends StatelessWidget {
                     current is ProductByCategorySuccessStates,
             builder: (context, state) {
               if (state is ProductByCategoryLoadingStates) {
-                return  SizedBox(
+                return SizedBox(
                   width: 25.w,
                   height: 25.h,
-                  
-                  
-                  child: CircularProgressIndicator(color: Colors.black,));
+
+                  child: CircularProgressIndicator(color: Colors.black),
+                );
               } else if (state is ProductByCategoryErrorStates) {
                 return SizedBox.shrink();
               } else if (state is ProductByCategorySuccessStates) {
                 return InkWell(
                   onTap: () {
-                    BlocProvider.of<HomeCubit>(
-                      context,
-                    ).scafoldKey.currentState!.openDrawer();
+                    // BlocProvider.of<HomeCubit>(
+                    //   context,
+                    // ).scafoldKey.currentState!.openDrawer();
+                    scafoldKey.currentState!.openDrawer();
                   },
 
                   child: Icon(Icons.menu),

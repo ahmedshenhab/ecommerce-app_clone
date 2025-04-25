@@ -35,7 +35,7 @@ class Offers extends StatelessWidget {
                 MaterialPageRoute(
                   builder:
                       (context) => ShowAllProductScreen(
-                        name: offer!.name ?? 'default',
+                        name: 'عروض اليوم',
                         product: offer!.products ?? [],
                       ),
                 ),

@@ -1,5 +1,6 @@
 import 'package:ecomerce_app/core/di/di.dart';
 import 'package:ecomerce_app/core/observer/observer.dart';
+import 'package:ecomerce_app/core/services/shared_prefrence/cach_helper.dart';
 import 'package:ecomerce_app/core/style/app_theme.dart';
 import 'package:ecomerce_app/module/home/cubit/cubit.dart';
 import 'package:ecomerce_app/module/home/cubit/states.dart';
@@ -12,6 +13,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = MyBlocObserver();
+
+ await CachHelper.init();
   setupGetIt();
   runApp(const AppEntry());
 }
@@ -68,7 +71,7 @@ class MyApp extends StatelessWidget {
                   debugShowCheckedModeBanner: false,
                   title: 'Flutter Demo',
                   theme: AppTheme.lighTheme,
-                  home:  HomeScreen(),
+                  home: HomeScreen(),
                 ),
           ),
     );

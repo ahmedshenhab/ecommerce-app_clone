@@ -34,5 +34,7 @@ class CachHelper {
 
   static Future<bool> removeData({required String key}) async {
     return await _pref!.remove(key);
+  } static Future<bool> clear() async {
+    return  _pref!.clear();
   }
 }
